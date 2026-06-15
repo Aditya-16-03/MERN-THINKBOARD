@@ -1,16 +1,54 @@
-function getNotes(req,res){
-    res.send("hello this is the sssssssssssss get aaaapi");
+const Note = require("../model/Note.js");
+
+async function getNotes(req,res){
+    try{
+        const notes =await Note.find();
+        res.status(200).json(notes);
+    }catch(error){
+        console.error("Error at getNotes Controller notes:", error);
+        res.status(500).json({ message: "Error fetching notes" });
+    }
 }
 
-function createNotes(req,res){
-    res.status(201).send("hello this is the sssssssssssss post aaaapi");
+async function createNotes(req,res){
+    try{
+        const { title, content } = req.body;
+        const newNote = new Note({
+            title, content});
+        await newNote.save();
+        res.status(201).json({ message: "Note created successfully", note: newNote });
+    }catch(error){
+        console.error("Error at createNotes Controller notes:", error);
+        res.status(500).json({ message: "Error creating note" });
+    }
 }
-function updateNotes(req,res){
-    res.status(200).send("hello this is the sssssssssssss put aaaapi");
+async function updateNotes(req,res){
+    try{
+        const { title, content } = req.body;
+        const updatedNote = await Note.findByIdAndUpdate(req.params.id, { title, content }, { new: true });
+        if (!updatedNote) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        res.status(200).json({ message: "Note updated successfully", note: updatedNote });
+    }catch(error){
+        console.error("Error at updateNotes Controller notes:", error);
+        res.status(500).json({ message: "Error updating note" });
+    }
 }
 
-function deleteNotes(req,res){
-    res.status(200).send("hello this is the sssssssssssss delete aaaapi");
+async function deleteNotes(req,res){
+    try{
+        const { id } = req.params;
+        const deletedNote = new Note({ id });
+        const result = await Note.findByIdAndDelete(id);
+        if (!result) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        res.status(200).json({ message: "Note deleted successfully", note: deletedNote });
+    }catch(error){
+        console.error("Error at deleteNotes Controller notes:", error);
+        res.status(500).json({ message: "Error deleting note" });
+    }
 }
 module.exports = {
   getNotes,
