@@ -1,20 +1,12 @@
-const express= require("express");
+const dotenv = require("dotenv");
+const express = require("express");
+const connectDB = require("./config/db.js");
+const notesRoutes = require("./routes/notesRoutes.js");
 
-const app=express();
-
-app.get("/api/notes",(req,res)=>{
-    res.send("hello this is the sssssssssssss get aaaapi");
-})
-
-app.post("/api/notes",(req,res)=>{
-    res.status(201).send("hello this is the sssssssssssss post aaaapi");
-})
-app.put("/api/notes/:id",(req,res)=>{
-    res.status(200).send("hello this is the sssssssssssss put aaaapi");
-})
-app.delete("/api/notes/:id",(req,res)=>{
-    res.status(200).send("hello this is the sssssssssssss delete aaaapi");
-})
+dotenv.config();
+const app = express();
+connectDB();
+app.use("/api/notes",notesRoutes);
 
 
 app.listen(5001,()=>{
